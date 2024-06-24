@@ -1,0 +1,75 @@
+// ->> /api/ai/openai
+import { NextRequest, NextResponse } from "next/server";
+import { NextApiRequest, NextApiResponse } from "next";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { OpenAI, ChatOpenAI } from "@langchain/openai";
+import { AIpromptTemplate } from "../../../../../shared/prompts/template";
+//import IAIPromptTemplate from "../../../../shared/interfaces/ai/template";
+
+export const runtime = "edge";
+
+export async function GET() {
+  try {
+    const data: any =
+      '{"data":[{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":97,"weekly_working_hours":35,"hourly_pay":53.57,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":97,"weekly_working_hours":35,"hourly_pay":53.57,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":3,"ordinary_pay":127,"weekly_working_hours":35,"hourly_pay":70.05,"bonus_pay":0}},{"records":{"gender":"Male","ranking":4,"ordinary_pay":182,"weekly_working_hours":35,"hourly_pay":100.27,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":127,"weekly_working_hours":35,"hourly_pay":70.05,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":97,"weekly_working_hours":35,"hourly_pay":53.57,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":87,"weekly_working_hours":35,"hourly_pay":48.08,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":117,"weekly_working_hours":35,"hourly_pay":64.56,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":4,"ordinary_pay":187,"weekly_working_hours":35,"hourly_pay":103.02,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":112,"weekly_working_hours":35,"hourly_pay":61.81,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":142,"weekly_working_hours":35,"hourly_pay":78.3,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":3,"ordinary_pay":127,"weekly_working_hours":35,"hourly_pay":70.05,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":97,"weekly_working_hours":35,"hourly_pay":53.57,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":107,"weekly_working_hours":35,"hourly_pay":59.07,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":102,"weekly_working_hours":35,"hourly_pay":56.32,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":97,"weekly_working_hours":35,"hourly_pay":53.57,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":97,"weekly_working_hours":35,"hourly_pay":53.57,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":3,"ordinary_pay":137,"weekly_working_hours":35,"hourly_pay":75.55,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":97,"weekly_working_hours":35,"hourly_pay":53.57,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":127,"weekly_working_hours":35,"hourly_pay":70.05,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":102,"weekly_working_hours":35,"hourly_pay":56.32,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":127,"weekly_working_hours":35,"hourly_pay":70.05,"bonus_pay":0}},{"records":{"gender":"Male","ranking":4,"ordinary_pay":147,"weekly_working_hours":35,"hourly_pay":81.04,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":82,"weekly_working_hours":35,"hourly_pay":45.33,"bonus_pay":0}},{"records":{"gender":"Female","ranking":3,"ordinary_pay":112,"weekly_working_hours":35,"hourly_pay":61.81,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":127,"weekly_working_hours":35,"hourly_pay":70.05,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":137,"weekly_working_hours":35,"hourly_pay":75.55,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":112,"weekly_working_hours":35,"hourly_pay":61.81,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":142,"weekly_working_hours":35,"hourly_pay":78.3,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":102,"weekly_working_hours":35,"hourly_pay":56.32,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":97,"weekly_working_hours":35,"hourly_pay":53.57,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":97,"weekly_working_hours":35,"hourly_pay":53.57,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":127,"weekly_working_hours":35,"hourly_pay":70.05,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":117,"weekly_working_hours":35,"hourly_pay":64.56,"bonus_pay":0}},{"records":{"gender":"Female","ranking":3,"ordinary_pay":112,"weekly_working_hours":35,"hourly_pay":61.81,"bonus_pay":0}},{"records":{"gender":"Male","ranking":3,"ordinary_pay":112,"weekly_working_hours":35,"hourly_pay":61.81,"bonus_pay":0}},{"records":{"gender":"Female","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}},{"records":{"gender":"Male","ranking":2,"ordinary_pay":92,"weekly_working_hours":35,"hourly_pay":50.82,"bonus_pay":0}}]}';
+    const prompt = PromptTemplate.fromTemplate(AIpromptTemplate);
+
+    const model = new ChatOpenAI({
+      openAIApiKey: "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",
+    });
+
+    const chain = prompt.pipe(model);
+
+    const result = await chain.invoke({
+      data: data as string,
+    });
+
+    // Format the received content
+    const stringMessage = result.content.toString();
+
+    const formattedMessage = stringMessage.split("\n").join("<br/>");
+
+    return NextResponse.json({
+      message: result.content,
+      status: "success",
+    });
+  } catch (err) {
+    return NextResponse.json({
+      error: "Error at openai  \n",
+      err,
+    });
+  }
+}
+
+export async function POST(req: NextRequest, res: NextResponse) {
+  try {
+    const data: any =
+      '{"data":[{"records":{"profession":"founder","Name":"priyatham","email":"priyatham002@gmail.com","phone":"07760512618"}},{"records":{"profession":"cfo","Name":"vatsavaye","email":"vatsavaye@gmail.com","phone":"07760512618"}},{"records":{"profession":"ceo","Name":"varma","email":"varma@gmail.com","phone":"07760512618"}}]}';
+    const prompt = PromptTemplate.fromTemplate(AIpromptTemplate);
+
+    const model = new ChatOpenAI({
+      openAIApiKey: "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",
+    });
+
+    const chain = prompt.pipe(model);
+
+    const result = await chain.invoke({
+      data: data as string,
+    });
+
+    // Format the received content
+    const stringMessage = result.content.toString();
+
+    const formattedMessage = stringMessage.split("\n").join("<br/>");
+
+    return NextResponse.json({
+      message: result.content,
+      status: "success",
+    });
+  } catch (err) {
+    return NextResponse.json({
+      error: "Error at openai  \n",
+      err,
+    });
+  }
+}
