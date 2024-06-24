@@ -40,36 +40,3 @@ export async function GET() {
     });
   }
 }
-
-export async function POST(req: NextRequest, res: NextResponse) {
-  try {
-    const data: any =
-      '{"data":[{"records":{"profession":"founder","Name":"priyatham","email":"priyatham002@gmail.com","phone":"07760512618"}},{"records":{"profession":"cfo","Name":"vatsavaye","email":"vatsavaye@gmail.com","phone":"07760512618"}},{"records":{"profession":"ceo","Name":"varma","email":"varma@gmail.com","phone":"07760512618"}}]}';
-    const prompt = PromptTemplate.fromTemplate(AIpromptTemplate);
-
-    const model = new ChatOpenAI({
-      openAIApiKey: "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",
-    });
-
-    const chain = prompt.pipe(model);
-
-    const result = await chain.invoke({
-      data: data as string,
-    });
-
-    // Format the received content
-    const stringMessage = result.content.toString();
-
-    const formattedMessage = stringMessage.split("\n").join("<br/>");
-
-    return NextResponse.json({
-      message: result.content,
-      status: "success",
-    });
-  } catch (err) {
-    return NextResponse.json({
-      error: "Error at openai  \n",
-      err,
-    });
-  }
-}
