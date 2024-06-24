@@ -15,7 +15,7 @@ export async function GET() {
     const prompt = PromptTemplate.fromTemplate(AIpromptTemplate);
 
     const model = new ChatOpenAI({
-      openAIApiKey: "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",
+      openAIApiKey: process.env.NEXT_PUBLIC_OPEN_AI as string,
     });
 
     const chain = prompt.pipe(model);
