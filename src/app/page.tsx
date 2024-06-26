@@ -7,6 +7,8 @@ export default function Home() {
   const [table, setTable] = useState("test2");
   const [status, setStatus] = useState("Submit");
   const [fetchedData, setFetchedData] = useState([]);
+  const [aiRes, setAiRes] = useState("No Data analysed by AI");
+  const [aiStatus, setAiStatus] = useState("Analyze Data");
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setStatus("Fetching data");
@@ -19,6 +21,20 @@ export default function Home() {
       setStatus("Fetched");
     } catch (error) {
       console.error("Error fetching data:", error);
+      setStatus("Error");
+    }
+  };
+
+  // Analyze data
+  const analyzeData = async () => {
+    try {
+      setAiStatus("Analyzing");
+      const res = await axios.post(`/api/ai/openai`, { data: fetchedData });
+      console.log(res.data.message);
+      setAiRes(res.data.message);
+      setAiStatus("Analyzed");
+    } catch (err) {
+      console.error("Error fetching data:", err);
       setStatus("Error");
     }
   };
@@ -83,6 +99,14 @@ export default function Home() {
           <div className="mt-8 overflow-x-auto">
             <table className="min-w-full border-collapse block md:table">
               <thead className="block md:table-header-group">
+                <button
+                  className="bg-orange-500 text-white text-sm p-2 rounded-md"
+                  onClick={analyzeData}
+                >
+                  {aiStatus}
+                </button>
+                <br />
+                {aiRes}
                 <tr className="border border-grey-500 md:border-none block md:table-row absolute -top-full md:top-auto -left-full md:left-auto md:relative">
                   <th className="bg-gray-600 p-2 text-white font-bold md:border md:border-grey-500 text-left block md:table-cell">
                     Gender

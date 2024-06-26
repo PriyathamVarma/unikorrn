@@ -16,7 +16,7 @@ export async function GET() {
     const prompt = PromptTemplate.fromTemplate(AIpromptTemplate);
 
     const model = new ChatOpenAI({
-      openAIApiKey: "sk-proj-tzLxy8AxdiMDqzQ0ffcrT3BlbkFJfiHsFOsfVxeFPDM87RHg",
+      openAIApiKey: "sk-proj-Etj9BIKnkCThy85n6k8ST3BlbkFJH61d9foO3FFjzkFKC9Bk",
       // process.env.NEXT_PUBLIC_OPEN_AI as string,
     });
 
@@ -31,6 +31,43 @@ export async function GET() {
 
     const formattedMessage = stringMessage.split("\n").join("<br/>");
 
+    return NextResponse.json({
+      message: result.content,
+      status: "success",
+    });
+  } catch (err) {
+    return NextResponse.json({
+      error: "Error at openai  \n",
+      err,
+    });
+  }
+}
+
+// POST
+export async function POST(req: NextRequest, res: NextResponse) {
+  try {
+    console.log("Check point 1");
+    const data: any = await req.json();
+    console.log("Check point 2");
+    const prompt = PromptTemplate.fromTemplate(AIpromptTemplate);
+    console.log("Check point 3");
+    const model = new ChatOpenAI({
+      openAIApiKey: "sk-proj-Etj9BIKnkCThy85n6k8ST3BlbkFJH61d9foO3FFjzkFKC9Bk",
+      // process.env.NEXT_PUBLIC_OPEN_AI as string,
+    });
+    console.log("Check point 4");
+
+    const chain = prompt.pipe(model);
+    console.log("Check point 5");
+    const result = await chain.invoke({
+      data: data as string,
+    });
+    console.log("Check point 6");
+    // Format the received content
+    const stringMessage = result.content.toString();
+    console.log("Check point 7");
+    const formattedMessage = stringMessage.split("\n").join("<br/>");
+    console.log("Check point 8");
     return NextResponse.json({
       message: result.content,
       status: "success",
