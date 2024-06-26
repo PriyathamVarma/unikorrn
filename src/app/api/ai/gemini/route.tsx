@@ -4,6 +4,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { OpenAI, ChatOpenAI } from "@langchain/openai";
 import { AIpromptTemplate } from "../../../../../shared/prompts/template";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
 //import IAIPromptTemplate from "../../../../shared/interfaces/ai/template";
 
 export const runtime = "edge";
@@ -15,17 +17,26 @@ export async function GET() {
 
     const prompt = PromptTemplate.fromTemplate(AIpromptTemplate);
 
-    const model = new ChatOpenAI({
-      openAIApiKey: "sk-proj-tzLxy8AxdiMDqzQ0ffcrT3BlbkFJfiHsFOsfVxeFPDM87RHg",
-      // process.env.NEXT_PUBLIC_OPEN_AI as string,
+    console.log("Check point 1");
+    // Model
+    const model = new ChatGoogleGenerativeAI({
+      model: "gemini-pro",
+      maxOutputTokens: 2048,
+      apiKey: "AIzaSyCBSLMMmmsdD7VcmG0x2HDQio8z_X2DsaM",
+      safetySettings: [
+        {
+          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+          threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+        },
+      ],
     });
-
+    console.log("Check point 2");
     const chain = prompt.pipe(model);
-
+    console.log("Check point 3");
     const result = await chain.invoke({
       data: data as string,
     });
-
+    console.log("Check point 4");
     // Format the received content
     const stringMessage = result.content.toString();
 
@@ -37,7 +48,7 @@ export async function GET() {
     });
   } catch (err) {
     return NextResponse.json({
-      error: "Error at openai  \n",
+      error: "Error at gemini ai  \n",
       err,
     });
   }
