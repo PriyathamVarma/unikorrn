@@ -30,7 +30,7 @@ export default function Home() {
     try {
       setAiStatus("Analyzing");
       const res = await axios.post(`/api/ai/openai`, { data: fetchedData });
-      console.log(res.data.message);
+      console.log(res.data);
       setAiRes(res.data.message);
       setAiStatus("Analyzed");
     } catch (err) {

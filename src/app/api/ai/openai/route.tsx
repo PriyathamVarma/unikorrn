@@ -52,7 +52,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const prompt = PromptTemplate.fromTemplate(AIpromptTemplate);
     console.log("Check point 3");
     const model = new ChatOpenAI({
-      openAIApiKey: "sk-proj-Etj9BIKnkCThy85n6k8ST3BlbkFJH61d9foO3FFjzkFKC9Bk",
+      openAIApiKey: process.env.NEXT_PUBLIC_OPEN_AI as string,
       // process.env.NEXT_PUBLIC_OPEN_AI as string,
     });
     console.log("Check point 4");

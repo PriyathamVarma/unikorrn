@@ -19,12 +19,14 @@ const airtable_pat = process.env.NEXT_PUBLIC_AIRTABLE_PAT;
 // **GET** - Retrieve airtable data
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
-    const base = new Airtable({ apiKey: airtable_pat }).base(
-      "appvgeuoxapogEv1a",
-    );
+    const name = req.nextUrl.searchParams.get("name");
+    const table = req.nextUrl.searchParams.get("table");
+    const base = new Airtable({ apiKey: airtable_pat }).base(name as string);
     console.log("Airtable token:", base);
     console.log("check point 1");
-    const records = await base("test2").select().firstPage();
+    const records = await base(table as string)
+      .select()
+      .firstPage();
     console.log("check point 2", records);
     const data = records.map((record: any) => ({
       records: record.fields,
