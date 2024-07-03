@@ -1,21 +1,23 @@
-// ->> api/v1/data
-
+// Import necessary modules and types
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
-import { baseAPI } from "../../../../../shared/api/api";
+import { AIpromptTemplate } from "../../../../../shared/prompts/template";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI } from "@langchain/openai";
 
-// Response Data
+// Define response data types
 type ResponseData = {
   message?: string;
-  meeting_data?: any;
-  heading_data?: any;
+  meeting_data?: any; // Update this type according to your actual data structure
+  heading_data?: any[]; // Update this type according to your actual data structure
+  AiMessage?: any;
   error?: {
     message: string;
     status?: number;
   };
 };
 
-// Fetch heading details by heading ID
+// Function to fetch heading details by heading ID
 const fetchHeadingDetails = async (headingId: string) => {
   try {
     const response = await axios.get(
@@ -31,7 +33,7 @@ const fetchHeadingDetails = async (headingId: string) => {
   }
 };
 
-// Fetch agenda item details by agenda item ID
+// Function to fetch agenda item details by agenda item ID
 const fetchAgendaItemDetails = async (agendaItemId: string) => {
   try {
     const response = await axios.get(
@@ -47,41 +49,32 @@ const fetchAgendaItemDetails = async (agendaItemId: string) => {
   }
 };
 
-// **GET** - Retrieve data
+// GET endpoint to retrieve data
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
-    const user_id = "1718720425857x695453764511528200";
-    console.log(
-      "--------------------------------------------------------------",
-    );
+    const user_id = req.nextUrl.searchParams.get("user_id");
 
-    // Meeting Data
+    // Fetch meetings data filtered by user ID
     const constraints = JSON.stringify([
       { key: "Created By", constraint_type: "equals", value: user_id },
     ]);
-
-    const meeting_data = await axios.get(
+    const meetingDataResponse = await axios.get(
       `https://governance-elite-86436.bubbleapps.io/version-test/api/1.1/obj/Meeting?constraints=${encodeURIComponent(
         constraints,
       )}`,
     );
-
-    // Filter meetings that have headings
-    const meetingsWithHeadings = meeting_data.data.response.results.filter(
-      (meeting: any) => meeting.Headings && meeting.Headings.length > 0,
-    );
-
-    // Sorting filtered data by "Modified Date" or "Time"
+    const meetingsWithHeadings =
+      meetingDataResponse.data.response.results.filter(
+        (meeting: any) => meeting.Headings && meeting.Headings.length > 0,
+      );
     const sortedMeetings = meetingsWithHeadings.sort((a: any, b: any) => {
       const dateA = new Date(a["Modified Date"] || a["Time"]).getTime();
       const dateB = new Date(b["Modified Date"] || b["Time"]).getTime();
       return dateB - dateA; // descending order
     });
-
-    // Get the latest meeting with headings
     const latestMeeting = sortedMeetings[0];
 
-    // Fetch detailed data for each heading
+    // Fetch heading details for each meeting heading
     const headingDetailsPromises = latestMeeting.Headings.map(
       (headingId: string) => fetchHeadingDetails(headingId),
     );
@@ -90,18 +83,42 @@ export async function GET(req: NextRequest, res: NextResponse) {
     // Fetch agenda item details for each agenda item in each heading
     const agendaItemDetailsPromises = headingDetails
       .map((heading: any) => heading.Agenda_Items)
-      .flat() // Flatten array of agenda item IDs
+      .flat()
       .map((agendaItemId: string) => fetchAgendaItemDetails(agendaItemId));
-
     const agendaItemDetails = await Promise.all(agendaItemDetailsPromises);
 
+    // Format the AI message object
+    const aiMessage = {
+      meeting_data: latestMeeting,
+      heading_data: JSON.stringify(
+        headingDetails.map((heading: any, index: number) => ({
+          ...heading,
+          Agenda_Items: agendaItemDetails[index],
+        })),
+      ),
+    };
+
+    // Create AI prompt template
+    const prompt = PromptTemplate.fromTemplate(AIpromptTemplate);
+
+    // Initialize ChatOpenAI model
+    const model = new ChatOpenAI({
+      openAIApiKey: process.env.NEXT_PUBLIC_OPEN_AI as string,
+    });
+
+    // Create a pipeline with prompt and model
+    const chain = prompt.pipe(model);
+
+    // Invoke the AI model with the correct parameters
+    const result = await chain.invoke({ aiMessage: aiMessage as any });
+
+    // Parse AI result content into JSON
+    const parsedAiMessage = JSON.parse(result.content as string);
+
+    // Return JSON response
     return NextResponse.json<ResponseData>({
       message: "Successful in getting data",
-      meeting_data: latestMeeting,
-      heading_data: headingDetails.map((heading: any, index: number) => ({
-        ...heading,
-        Agenda_Items: agendaItemDetails[index],
-      })),
+      AiMessage: parsedAiMessage,
     });
   } catch (err) {
     console.error("Error fetching data: \n", err);

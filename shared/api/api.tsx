@@ -17,4 +17,25 @@ Heading Data by ID:
 Agenda Item by ID: 
  https://governance-elite-86436.bubbleapps.io/version-test/api/1.1/obj/Agenda_item/1719849887672x985438484774780900
 
+
+ Expected output;
+ {
+  "message": "Successful in getting data",
+  "AiMessage": {
+    "MeetingHeadingAndAgenda": {
+      "Heading 1": {
+        "Agenda Item 1": "Welcome",
+        "Agenda Item 2": "Update from last meeting"
+      },
+      "Heading 2": {
+        "Agenda Item 1": "Cover Page",
+        "Agenda Item 2": "Agreeing on future steps"
+      },
+      "Heading 3": {
+        "Agenda Item 1": "Review action points",
+        "Agenda Item 2": "Discuss upcoming events"
+      }
+    }
+  }
+}
 */
