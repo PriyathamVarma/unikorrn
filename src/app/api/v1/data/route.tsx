@@ -109,8 +109,15 @@ export async function GET(req: NextRequest, res: NextResponse) {
     // Create a pipeline with prompt and model
     const chain = prompt.pipe(model);
 
+    const expected_output = JSON.stringify(
+      '  "message": "Successful in getting data",\n "AiMessage": {"Meeting": {"Headings": [{"Heading": "Update on project status","Agenda item 1": "Review progress on deliverables","Agenda item 2": "Discuss any issues or roadblocks"},{"Heading": "Budget allocation for upcoming quarter","Agenda item 1": "Present financial projections", "Agenda item 2": "Allocate resources accordingly"},{"Heading": "Team building activities","Agenda item 1": "Plan upcoming team retreat","Agenda item 2": "Discuss team bonding exercises"}]}}',
+    );
+
     // Invoke the AI model with the correct parameters
-    const result = await chain.invoke({ aiMessage: aiMessage as any });
+    const result = await chain.invoke({
+      aiMessage: aiMessage as any,
+      expected_output,
+    });
 
     // Parse AI result content into JSON
     const parsedAiMessage = JSON.parse(result.content as string);
