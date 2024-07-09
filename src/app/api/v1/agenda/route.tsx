@@ -53,6 +53,7 @@ const fetchAgendaItemDetails = async (agendaItemId: string) => {
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
     const user_id = req.nextUrl.searchParams.get("user_id");
+    const meeting_type = req.nextUrl.searchParams.get("meeting_type");
 
     // Fetch meetings data filtered by user ID
     const constraints = JSON.stringify([
@@ -72,7 +73,14 @@ export async function GET(req: NextRequest, res: NextResponse) {
       const dateB = new Date(b["Modified Date"] || b["Time"]).getTime();
       return dateB - dateA; // descending order
     });
-    const latestMeeting = sortedMeetings[0];
+    // Filter meetings by meeting type
+    const filteredMeetings = sortedMeetings.filter(
+      (meeting: any) => meeting.Meeting_Type === meeting_type,
+    );
+
+    // Get the latest meeting based on the meeting type or fallback to the latest sorted meeting
+    const latestMeeting =
+      filteredMeetings.length > 0 ? filteredMeetings[0] : sortedMeetings[0];
 
     // Fetch heading details for each meeting heading
     const headingDetailsPromises = latestMeeting.Headings.map(
@@ -125,8 +133,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
     // Return JSON response
     return NextResponse.json<ResponseData>({
       message: "Successful in getting data",
-      // AiMessage: parsedAiMessage,
-      AiMessage: sortedMeetings,
+      AiMessage: parsedAiMessage,
+      // AiMessage: latestMeeting,
     });
   } catch (err) {
     console.error("Error fetching data: \n", err);
