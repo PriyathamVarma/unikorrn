@@ -52,6 +52,7 @@ const fetchAgendaItemDetails = async (agendaItemId: string) => {
 // GET endpoint to retrieve data
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
+    console.count("Check point");
     const user_id = req.nextUrl.searchParams.get("user_id");
     const meeting_type = req.nextUrl.searchParams.get("meeting_type");
 
@@ -64,6 +65,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
         constraints,
       )}`,
     );
+
     const meetingsWithHeadings =
       meetingDataResponse.data.response.results.filter(
         (meeting: any) => meeting.Headings && meeting.Headings.length > 0,
@@ -118,7 +120,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
     const chain = prompt.pipe(model);
 
     const expected_output = JSON.stringify(
-      '  "message": "Successful in getting data",\n "AiMessage": {"Meeting": {"Headings": [{"Heading": "Update on project status","Agenda item 1": "Review progress on deliverables","Agenda item 2": "Discuss any issues or roadblocks"},{"Heading": "Budget allocation for upcoming quarter","Agenda item 1": "Present financial projections", "Agenda item 2": "Allocate resources accordingly"},{"Heading": "Team building activities","Agenda item 1": "Plan upcoming team retreat","Agenda item 2": "Discuss team bonding exercises"}]}}',
+      '  "message": "Successful in getting data",\n "AiMessage": {"Meeting": {"Headings": [{"Heading": "Update on project status","Agenda item 1": "Review progress on deliverables","Agenda item 2": "Discuss any issues or roadblocks"}]}}',
     );
 
     // Invoke the AI model with the correct parameters
